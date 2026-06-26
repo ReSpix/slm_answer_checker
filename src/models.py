@@ -4,12 +4,15 @@ from pydantic import BaseModel, ConfigDict, Field
 class ConceptScore(BaseModel):
     id: int
     concept_name: str
-    coverage: int = Field(ge=0, le=2, description="0=not covered or just named, 1=partial coverage, 2=fully covered")
+    coverage: int = Field(
+        ge=0, le=2, description="0=not covered, 1=partial coverage, 2=fully covered"
+    )
 
 
 class GradingResult(BaseModel):
     concepts: list[ConceptScore]
     feedback: str
+    manipulation: bool
 
 
 class Question(BaseModel):
@@ -32,3 +35,12 @@ class Answer(BaseModel):
     text: str
     min_score: int | float
     max_score: int | float
+
+
+class Concept(BaseModel):
+    text: str
+    importance: int = Field(..., ge=1, le=10)
+
+
+class KeyConcepts(BaseModel):
+    concepts: list[Concept]
