@@ -1,3 +1,4 @@
+import ollama
 from pydantic import BaseModel, Field
 
 # Key concepts
@@ -58,3 +59,14 @@ class TestCase(BaseModel):
     """Тестовый случай, содержащий вопрос и список ответов."""
     question: Question = Field(..., description="Вопрос")
     answers: list[Answer] = Field(..., description="Список ответов")
+
+
+# Evaluation
+
+class ModelEvaluation(BaseModel):
+    model: str
+    temperature: float
+    test_case: TestCase
+    key_concepts: KeyConcepts
+    grading_results: list[GradingResult] = Field(default_factory=list)
+    times_per_token: list[int] = Field(default_factory=list)
