@@ -20,9 +20,9 @@ class ConceptScore(BaseModel):
     id: int
     concept_name: str
     coverage: int = Field(
-        ge=-1,
+        ge=0,
         le=2,
-        description="-1=critical misunderstanding, 0=not covered, 1=partial coverage, 2=fully covered",
+        description="0=not covered, 1=partial coverage, 2=fully covered",
     )
 
 
