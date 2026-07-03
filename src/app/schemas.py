@@ -37,6 +37,7 @@ class GradingResult(BaseModel):
 
 class Question(BaseModel):
     """Вопрос"""
+
     domain: str = Field(..., description="Общая сфера вопроса")
     theme: str = Field(..., description="Конкретное направление вопроса")
     text: str = Field(..., description="Текст вопроса")
@@ -45,6 +46,7 @@ class Question(BaseModel):
 
 class Answer(BaseModel):
     """Ответ на вопрос"""
+
     answer_type: str = Field(
         ...,
         description="Общее качество ответа: отличный, хороший, недопонимание, итд",
@@ -57,16 +59,21 @@ class Answer(BaseModel):
 
 class TestCase(BaseModel):
     """Тестовый случай, содержащий вопрос и список ответов."""
+
     question: Question = Field(..., description="Вопрос")
     answers: list[Answer] = Field(..., description="Список ответов")
 
 
 # Evaluation
 
+
 class ModelEvaluation(BaseModel):
+    case_uuid: str
     model: str
     temperature: float
-    test_case: TestCase
+    question: Question
     key_concepts: KeyConcepts
-    grading_results: list[GradingResult] = Field(default_factory=list)
-    times_per_token: list[int] = Field(default_factory=list)
+    answer: Answer
+    grading_results: GradingResult
+    eval_duration: int | None
+    eval_count: int | None
