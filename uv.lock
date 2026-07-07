@@ -2137,6 +2137,7 @@ dependencies = [
     { name = "jinja2" },
     { name = "langchain-gigachat" },
     { name = "ollama" },
+    { name = "scikit-learn" },
     { name = "sentence-transformers" },
 ]
 
@@ -2154,6 +2155,7 @@ requires-dist = [
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "langchain-gigachat", specifier = ">=0.5.1" },
     { name = "ollama", specifier = ">=0.6.2" },
+    { name = "scikit-learn", specifier = ">=1.9.0" },
     { name = "sentence-transformers", specifier = ">=5.6.0" },
 ]
 
