@@ -11,3 +11,4 @@ wheels/
 
 
 .env
+chroma_db/
