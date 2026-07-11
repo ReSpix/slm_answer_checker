@@ -1,4 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from fastapi import Depends
+from typing import Annotated
 
 from app.config import sqlite_dir
 
@@ -13,3 +15,5 @@ AsyncSessionLocal = async_sessionmaker(
 async def get_session():
     async with AsyncSessionLocal() as session:
         yield session
+
+SessionDep = Annotated[AsyncSession, Depends(get_session)]

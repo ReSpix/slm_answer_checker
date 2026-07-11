@@ -5,6 +5,11 @@ services:
       - data:/databases
     ports:
       - 8000:8000
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
 
 
 volumes:
