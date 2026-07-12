@@ -18,7 +18,7 @@ GRADING_MODEL_CONFIG = {"name": "t-tech/T-lite-it-2.1:Q4_K_M", "temperature": 1}
 
 CHROMA_COLLECTION_NAME = "slm_answer_checker_rag"
 
-OLLAMA_URL = os.getenv("OLLAMA_URL")
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 
 SKIP_EMBEDDING_INIT_ON_STARTUP = os.getenv(
     "SKIP_EMBEDDING_INIT_ON_STARTUP", ""

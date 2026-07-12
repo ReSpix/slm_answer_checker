@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import Annotated
 
 from fastapi import Depends
@@ -6,6 +7,9 @@ from fastapi import Depends
 from app.database.session import get_session
 from app.database.models import Questions
 from app.rag import rag_generate
+
+
+logger = logging.getLogger(__name__)
 
 
 class ReferenceAnswersManager:
@@ -29,10 +33,15 @@ class ReferenceAnswersManager:
                 if question and question.reference_answer is not None:
                     return
 
+            logger.info(f"Start generating reference answer for question(id={question_id})")
             answer = await rag_generate(question_id)
+            logger.info(f"End generating reference answer for question(id={question_id})")
 
             async with get_session() as session:
                 question = await session.get(Questions, question_id)
+                if not question:
+                    raise ValueError(f"No question with id={question_id} after rag_generate")
+                
                 question.reference_answer = answer
                 await session.commit()
 

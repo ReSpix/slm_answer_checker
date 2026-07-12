@@ -1,11 +1,15 @@
 import asyncio
 from typing import Annotated
+import logging
 
 from fastapi import Depends
+from sqlalchemy.orm import selectinload
 
 from app.database.session import get_session
 from app.database.models import Questions, KeyConcepts
 from app.concepts_extraction import key_concepts_generate
+
+logger = logging.getLogger(__name__)
 
 
 class KeyConceptsManager:
@@ -25,11 +29,17 @@ class KeyConceptsManager:
     async def _process(self, question_id: int, event: asyncio.Event):
         try:
             async with get_session() as session:
-                question = await session.get(Questions, question_id)
+                question = await session.get(
+                    Questions,
+                    question_id,
+                    options=[selectinload(Questions.key_concepts)],
+                )
                 if question and len(question.key_concepts) > 0:
                     return
 
+            logger.info(f"Start generating key concepts for question(id={question_id})")
             concepts = await key_concepts_generate(question_id)
+            logger.info(f"End generating key concepts for question(id={question_id})")
 
             async with get_session() as session:
                 concepts = [
@@ -50,10 +60,8 @@ class KeyConceptsManager:
 key_concepts_manager = KeyConceptsManager()
 
 
-def get_reference_answers_manager() -> KeyConceptsManager:
+def get_key_concepts_manager() -> KeyConceptsManager:
     return key_concepts_manager
 
 
-KeyConcManagerDep = Annotated[
-    KeyConceptsManager, Depends(get_reference_answers_manager)
-]
+KeyConcManagerDep = Annotated[KeyConceptsManager, Depends(get_key_concepts_manager)]

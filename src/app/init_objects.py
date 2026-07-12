@@ -20,6 +20,7 @@ def init_embedding_model():
 def get_embedding_model():
     if embedding is None:
         init_embedding_model()
+    assert embedding is not None
 
     return embedding
 
@@ -32,7 +33,7 @@ def init_vectorstore():
     logger.info("Start init vectorstore")
     vectorstore = Chroma(
         collection_name=CHROMA_COLLECTION_NAME,
-        persist_directory=chromadb_dir,
+        persist_directory=str(chromadb_dir),
         embedding_function=get_embedding_model(),
     )
     logger.info("End init vectorstore")
@@ -41,5 +42,6 @@ def init_vectorstore():
 def get_vectorstore():
     if vectorstore is None:
         init_vectorstore()
+    assert vectorstore is not None
 
     return vectorstore
