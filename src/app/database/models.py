@@ -4,6 +4,7 @@ from sqlalchemy import (
     Integer,
     UniqueConstraint,
     String,
+    Boolean
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -23,14 +24,27 @@ class Questions(Base):
     key_concepts: Mapped[list["KeyConcepts"]] = relationship()
 
 
-class QuestionDocuments(Base):
-    __tablename__ = "question_documents"
+class Documents(Base):
+    __tablename__ = "documents"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    original_filename: Mapped[str] = mapped_column(Text, nullable=False)
+    stored_filename: Mapped[str] = mapped_column(Text, nullable=False)
+    external_document_id: Mapped[str] = mapped_column(String(36), nullable=True)
+    vectorized: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class QuestionDocumentLinks(Base):
+    __tablename__ = "question_document_links"
+    __table_args__ = (UniqueConstraint("question_id", "document_id"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     question_id: Mapped[int] = mapped_column(
         ForeignKey("questions.id", ondelete="CASCADE"), nullable=False
     )
-    external_document_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    document_id: Mapped[int] = mapped_column(
+        ForeignKey("documents.id", ondelete="CASCADE"), nullable=False
+    )
 
 
 class KeyConcepts(Base):

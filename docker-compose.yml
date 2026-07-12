@@ -2,9 +2,16 @@ services:
   server:
     build: .
     volumes:
-      - data:/databases
+      - databases:/databases
+      - documents:/documents
+      - hf_cache:/app/.cache/huggingface
     ports:
       - 8000:8000
+    environment:
+      - HF_HOME=/app/.cache/huggingface
+      - HUGGINGFACE_HUB_CACHE=/app/.cache/huggingface
+      - TRANSFORMERS_CACHE=/app/.cache/huggingface
+      - OLLAMA_URL=host.docker.internal:11434
     develop:
       watch:
         - action: sync
@@ -13,4 +20,6 @@ services:
 
 
 volumes:
-  data:
+  databases:
+  documents:
+  hf_cache:
