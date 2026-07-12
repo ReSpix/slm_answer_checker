@@ -1,4 +1,4 @@
-from typing import TypeVar
+from typing import TypeVar, Any
 
 from sqlalchemy import select
 from app.schemas.api import QuestionDocumentLink
@@ -10,10 +10,9 @@ from sqlalchemy.orm import DeclarativeBase
 T = TypeVar("T", bound=DeclarativeBase)
 
 
-async def get_all(session: AsyncSession, cls: T) -> list[T]:
-    query = select(cls)
+async def get_all(session: AsyncSession, cls: T, *options: Any) -> list[T]:
+    query = select(cls).options(*options)
     result = await session.execute(query)
-
     return result.scalars().all()
 
 

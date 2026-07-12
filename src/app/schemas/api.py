@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field
-
+from pydantic import BaseModel
+from app.schemas import Concept
 
 class BasicResponse(BaseModel):
     success: bool
@@ -16,6 +16,7 @@ class QuestionRead(BaseModel):
     id: int
     text: str
     reference_answer: str | None = None
+    key_concepts: list[Concept]
 
 class DocumentRead(BaseModel):
     id: int

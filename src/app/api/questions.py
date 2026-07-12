@@ -1,4 +1,5 @@
 from fastapi.routing import APIRouter
+from sqlalchemy.orm import selectinload
 
 from app.schemas.api import QuestionCreate, QuestionRead
 from app.database.models import Questions
@@ -18,5 +19,5 @@ async def create_question(question_create: QuestionCreate, db: SessionDep):
 
 @questions_router.get("/", response_model=list[QuestionRead])
 async def questions_list(db: SessionDep):
-    questions = await get_all(db, Questions)
+    questions = await get_all(db, Questions, selectinload(Questions.key_concepts))
     return questions

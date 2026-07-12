@@ -1,6 +1,10 @@
 import ollama
 import json
-from app.schemas import KeyConcepts
+from app.database.models import Questions
+from app.database.session import get_session
+from app.prompts import get_template
+from app.schemas import Concept, KeyConcepts
+from app.config import KEY_CONCEPTS_MODEL_CONFIG
 
 
 def extract_key_concepts(
@@ -18,3 +22,22 @@ def extract_key_concepts(
         raise ollama.ResponseError("Response is None")
 
     return KeyConcepts.model_validate(json.loads(response.response)), response
+
+
+async def key_concepts_generate(question_id: int) -> list[Concept]:
+    async with get_session() as session:
+        question = await session.get(Questions, question_id)
+
+    system_template = get_template("concepts_extraction/system")
+    user_template = get_template("concepts_extraction/user")
+
+    model_name = KEY_CONCEPTS_MODEL_CONFIG["name"]
+    temperature = KEY_CONCEPTS_MODEL_CONFIG["temperature"]
+    key_concepts, _ = extract_key_concepts(
+        model_name,
+        temperature,
+        system_template.render(),
+        user_template.render({"question": question}),
+    )
+
+    return key_concepts.concepts

@@ -1,10 +1,10 @@
-import ollama
 from pydantic import BaseModel, Field
 
 # Key concepts
 
 
 class Concept(BaseModel):
+    model_config = {"from_attributes": True}
     text: str
     importance: int = Field(..., ge=1, le=10)
 
