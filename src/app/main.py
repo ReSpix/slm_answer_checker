@@ -3,12 +3,13 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from app.api.answers import answers_router
 from app.api.questions import questions_router
 from app.api.rag import rag_router
+from app.config import SKIP_EMBEDDING_INIT_ON_STARTUP
 from app.database.models import Base
 from app.database.session import engine
 from app.init_objects import init_embedding_model, init_vectorstore
-from app.config import SKIP_EMBEDDING_INIT_ON_STARTUP
 
 logging.basicConfig(level=logging.INFO)
 
@@ -32,6 +33,7 @@ app = FastAPI(lifespan=lifespan)
 
 app.include_router(questions_router)
 app.include_router(rag_router)
+app.include_router(answers_router)
 
 
 @app.get("/health")
