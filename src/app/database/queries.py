@@ -2,7 +2,13 @@ from typing import TypeVar, Any
 
 from sqlalchemy import select
 from app.schemas.api import QuestionDocumentLink
-from app.database.models import Answers, QuestionDocumentLinks, Questions
+from app.database.models import (
+    Answers,
+    ConceptScores,
+    Gradings,
+    QuestionDocumentLinks,
+    Questions,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from sqlalchemy.orm import DeclarativeBase, selectinload
@@ -44,3 +50,16 @@ async def get_full_answer_data(session: AsyncSession, answer_id: int) -> Answers
     answer = result.scalar()
 
     return answer
+
+
+async def get_all_gradings_for_answer(session: AsyncSession, answer_id: int):
+    query = (
+        select(Gradings)
+        .where(Gradings.answer_id == answer_id)
+        .options(
+            selectinload(Gradings.concept_scores).selectinload(ConceptScores.concept)
+        )
+    )
+    result = await session.execute(query)
+
+    return result.scalars().all()

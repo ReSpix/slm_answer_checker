@@ -1,11 +1,4 @@
-from sqlalchemy import (
-    ForeignKey,
-    Text,
-    Integer,
-    UniqueConstraint,
-    String,
-    Boolean
-)
+from sqlalchemy import ForeignKey, Text, Integer, UniqueConstraint, String, Boolean
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -86,6 +79,7 @@ class Gradings(Base):
     feedback: Mapped[str] = mapped_column(Text, nullable=False)
 
     answer: Mapped["Answers"] = relationship()
+    concept_scores: Mapped[list["ConceptScores"]] = relationship(back_populates="grading")
 
 
 class ConceptScores(Base):
@@ -103,4 +97,4 @@ class ConceptScores(Base):
     score: Mapped[int] = mapped_column(Integer, nullable=False)
 
     concept: Mapped["KeyConcepts"] = relationship()
-    grading: Mapped["Gradings"] = relationship()
+    grading: Mapped["Gradings"] = relationship(back_populates="concept_scores")
